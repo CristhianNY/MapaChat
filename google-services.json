@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1038200050523",
+    "firebase_url": "https://mimap-2a1de.firebaseio.com",
+    "project_id": "mimap-2a1de",
+    "storage_bucket": "mimap-2a1de.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1038200050523:android:c81d4293febb3504",
+        "android_client_info": {
+          "package_name": "com.optimusfly.cali1.mapa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1038200050523-3vka0qu61ercunte9u99behnkg9osljo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyupXu-5y-vhdQk2PSR9yjhQjqgekVDV8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

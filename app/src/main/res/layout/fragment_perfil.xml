@@ -1,0 +1,107 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:layout_height="wrap_content"
+        android:scrollbarSize="@dimen/activity_left_margin">
+
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/search_mag_icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:gravity="center"
+                android:text="Titulo del grupo"
+                android:textSize="25dp"
+
+                android:textStyle="bold" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/view_pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp" />
+                <ImageButton
+                    android:id="@+id/left_nav"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_vertical|left"
+                    android:src="@drawable/espalda"
+                    android:background="@android:color/transparent"/>
+                <ImageButton
+                    android:id="@+id/right_nav"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:src="@drawable/proximo"
+                    android:background="@android:color/transparent"/>
+            </FrameLayout>
+            <Button
+                android:id="@+id/abrir_perfil"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="@string/abrir_perfil_facebook"
+                android:textColor="#ffff"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:background="@drawable/bordes_redondos"/>
+
+            <RelativeLayout
+                android:id="@+id/caja_video"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+
+                >
+
+               <TextView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="@string/distancia"/>
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/content_descripcion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="  Got Fiesta?... We got the music!! LOS REYES MARIACHI-QUARTET is a very unique and versatile trio. Like no other, we perform a wide variety of styles and rhythms that represent the traditional Mexican music, mariachi, and latin-american folkloric music, like romantic boleros, cha-cha-cha, rancheras, cumbias, huapangos, sones, and fast paced rhythms typical from Veracruz like La Bamba, El Tilingo-Lingo, etc. We are experienced musicians with well over 1,500 songs in our repertory. The." />
+
+
+
+            <Button
+                android:id="@+id/btn_start_chat"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btnSaludar"
+                android:layout_marginBottom="30dp"/>
+
+
+
+
+        </LinearLayout>
+
+
+
+    </android.support.v4.widget.NestedScrollView>
+</LinearLayout>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+   <TextView
+                     android:id="@+id/hora"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_gravity="center_horizontal"
+                     android:layout_marginTop="20dp"
+                     android:textColor="#98a9b7"
+                     android:text="January 18" />
+
+                <LinearLayout
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:layout_marginTop="2dp"
+                    android:id="@+id/frame_mensaje">
+
+                     <de.hdodenhof.circleimageview.CircleImageView
+                         android:id="@+id/imagen_perfil_mensaje"
+                         android:layout_width="40dp"
+                         android:layout_height="40dp"
+                         android:layout_gravity="bottom"
+                         android:layout_marginLeft="20dp"
+                         android:src="@drawable/images" />
+
+                     <LinearLayout
+
+                         android:id="@+id/box_mensaje"
+                         android:layout_width="200dp"
+                         android:layout_height="wrap_content"
+                         android:layout_marginLeft="10dp"
+                         android:background="@drawable/round_grey"
+                         android:orientation="vertical"
+                         android:padding="10dp">
+
+
+                         <TextView
+                             android:id="@+id/mensaje_recivido"
+                             android:layout_width="wrap_content"
+                             android:layout_height="wrap_content"
+                             android:layout_marginTop="20dp"
+                             android:textColor="#616e7f"
+                             android:text="Do you need help with pricing ?" />
+
+
+                     </LinearLayout>
+
+
+                 </LinearLayout>
+
+
+
+               <!-- <LinearLayout
+                    android:layout_marginTop="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:orientation="vertical"
+                    android:gravity="right">
+
+                    <LinearLayout
+                        android:layout_width="200dp"
+                        android:layout_height="100dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/round_blue"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+
+
+
+
+                        <TextView
+                            android:id="@+id/mensaje_enviado"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:text="Do you need help with pricing ?"
+                            android:textColor="#fff" />
+                    </LinearLayout>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginTop="10dp"
+                        android:textColor="#98a9b7"
+                        android:text="just now. Seen"/>
+
+                </LinearLayout>-->
+
+</LinearLayout>

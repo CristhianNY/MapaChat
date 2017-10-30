@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "39523201534",
+    "firebase_url": "https://mapachat-53fb4.firebaseio.com",
+    "project_id": "mapachat-53fb4",
+    "storage_bucket": "mapachat-53fb4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:39523201534:android:c81d4293febb3504",
+        "android_client_info": {
+          "package_name": "com.optimusfly.cali1.mapa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "39523201534-v4snba9tt57fqrbaa76rjiqem88amh71.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.optimusfly.cali1.mapa",
+            "certificate_hash": "ac4a851e89af8de8b1c4dacca0b9096bc7a6fe22"
+          }
+        },
+        {
+          "client_id": "39523201534-nmhpg92hksv1mg29o75448rqfovb5lmf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2b-x3957EDWpIESIJ0JTptM_PPEI1X3U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "39523201534-nmhpg92hksv1mg29o75448rqfovb5lmf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
