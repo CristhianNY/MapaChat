@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.firebase.geofire.GeoFire;
+import com.google.android.gms.maps.MapFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -89,21 +91,22 @@ public class MainActivity extends AppCompatActivity  implements  NavigationView.
         if(id == R.id.mapa){
             //Do whatever you want to do
             MapaFragment mapaFragment = new MapaFragment();
+
             //  MainFragment mainFragment = new MainFragment();
             // principalFragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, mapaFragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
+            FragmentManager manager = getSupportFragmentManager();
+
+            manager.beginTransaction().replace(R.id.container,mapaFragment).commit();
+
+
 
 
         }
 
         if(id == R.id.chat){
-
             ChatListFragment chatListFragment = new ChatListFragment();
-            //  MainFragment mainFragment = new MainFragment();
-            // principalFragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, chatListFragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
+            FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.container,chatListFragment).commit();
         }
 
         if(id == R.id.salir){

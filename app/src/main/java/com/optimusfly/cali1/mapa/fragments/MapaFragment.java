@@ -392,7 +392,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
                 Marker marker =markers.get(key);
                 if (marker != null) {
 
-                    animateMarkerTo(marker, location.latitude, location.longitude);
+                  //  animateMarkerTo(marker, location.latitude, location.longitude);
                 }
 
 
