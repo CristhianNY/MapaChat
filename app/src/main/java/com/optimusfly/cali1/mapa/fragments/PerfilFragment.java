@@ -52,7 +52,7 @@ public class PerfilFragment extends Fragment {
     private SliderAdapter adapter;
     private ArrayList<String> IMAGES = new ArrayList<>();
     private Button btnStartChat,abrirPerfil;
-    private String idUsuario;
+    private String idUsuario,email;
     private FirebaseUser usuario;
     private int mContainerId;
     private FirebaseUser currentUser;
@@ -78,6 +78,8 @@ public class PerfilFragment extends Fragment {
         rightNav = (ImageButton) v.findViewById(R.id.right_nav);
         leftNav = (ImageButton) v.findViewById(R.id.left_nav);
         idUsuario = this.getArguments().getString("idUsuario");
+        email = this.getArguments().getString("email");
+
         abrirPerfil = (Button)v.findViewById(R.id.abrir_perfil);
         final DatabaseReference usuarioReferece = FirebaseDatabase.getInstance().getReference("usuario");
 
@@ -153,8 +155,8 @@ public class PerfilFragment extends Fragment {
 
                         Usuario usuario = dataSnapshot2.getValue(Usuario.class);
                         ChatList chatlist = new ChatList(usuario.getImagenPerfil(),
-                                usuario.getUsuario(), new Date().toString(),idUsuario,idUsuario);
-                        ref.setValue(chatlist);
+                                usuario.getUsuario(), new Date().toString(),idUsuario,idUsuario,email);
+                       // ref.setValue(chatlist);
                         //   String valorCalificacion = Float.toString(calificacion);
 
 
@@ -162,6 +164,7 @@ public class PerfilFragment extends Fragment {
 
                         Bundle bundle = new Bundle();
                         bundle.putString("idUsuario",idUsuario.toString());
+                        bundle.putString("email",email);
                         fragmentChat.setArguments(bundle);
                         fragmentChat.show(getFragmentManager(),"chat");
                     }

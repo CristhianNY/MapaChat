@@ -49,6 +49,7 @@ import com.optimusfly.cali1.mapa.Models.Usuario;
 import com.optimusfly.cali1.mapa.Models.UsuarioCerca;
 import com.optimusfly.cali1.mapa.PicassoMarker;
 import com.optimusfly.cali1.mapa.R;
+import com.optimusfly.cali1.mapa.References;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -69,7 +70,8 @@ public class ListUserNearFragment extends Fragment implements LocationListener, 
     private RecyclerView recyclerView;
     Location mLastLocation;
 
-
+    private Set<GeoQuery> geoQueries = new HashSet<>();
+    private Set<GeoQuery> mGeoquerys;
     private double radius = 1;
     GoogleApiClient mGoogleApiClient;
 
@@ -100,6 +102,7 @@ public class ListUserNearFragment extends Fragment implements LocationListener, 
         }
 
 
+        mGeoquerys = new HashSet<>();
         recyclerView = (RecyclerView) v.findViewById(R.id.usuarios_cerca);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
@@ -108,9 +111,12 @@ public class ListUserNearFragment extends Fragment implements LocationListener, 
         manager.setStackFromEnd(true);
 
         usuariosCerca = new ArrayList<>();
-        buildGoogleApiCliente();
+      buildGoogleApiCliente();
         return v;
     }
+
+
+
 
 
     @Override
@@ -121,8 +127,7 @@ public class ListUserNearFragment extends Fragment implements LocationListener, 
 
 
             double latitude = location.getLatitude();
-
-            mostrarUsuariosCerca();
+//mostrarUsuariosCerca();
 
 
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -149,6 +154,21 @@ public class ListUserNearFragment extends Fragment implements LocationListener, 
         mGoogleApiClient.connect();
 
 
+    }
+
+    private void removeListeners(){
+
+        for(GeoQuery geoQuery: geoQueries){
+            geoQuery.removeAllListeners();
+
+
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        removeListeners();
     }
 
     private void mostrarUsuariosCerca() {
@@ -245,7 +265,9 @@ public class ListUserNearFragment extends Fragment implements LocationListener, 
             }
 
 
+
         });
+      geoQueries.add(geoQuery);
     }
     final int LOCATION_REQUEST_CODE = 1;
 

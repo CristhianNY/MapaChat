@@ -53,7 +53,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.ListCh
 
        holder.nombre.setText(usuario.getNombre());
         Picasso.with(fragment.getContext()).load(usuario.getImagenPerfil()).resize(200,200).into( holder.fotoPerfil);
-        holder.fecha.setText(usuario.getFecha());
+        holder.fecha.setText(usuario.getMensaje());
 
         holder.relativeLayoutchat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +62,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.ListCh
                 Bundle bundle = new Bundle();
 
                 bundle.putString("idUsuario",usuario.getIdUsuario());
+                bundle.putString("email",usuario.getIdUsuario());
 
                 ChatFragment chatFragment = new ChatFragment();
                 chatFragment.setArguments(bundle);

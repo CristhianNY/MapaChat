@@ -7,18 +7,27 @@ package com.optimusfly.cali1.mapa.Models;
 public class ChatList {
 
 
-    private String imagenPerfil,nombre,fecha, currentId,idUsuario;
+    private String imagenPerfil,nombre,mensaje, currentId,idUsuario,email;
 
     public ChatList() {
     }
 
-    public ChatList(String imagenPerfil, String nombre, String fecha, String currentId, String idUsuario) {
+    public ChatList(String imagenPerfil, String nombre, String mensaje, String currentId, String idUsuario, String email) {
         this.currentId = currentId;
         this.idUsuario = idUsuario;
         this.imagenPerfil = imagenPerfil;
         this.nombre = nombre;
-        this.fecha = fecha;
+        this.mensaje = mensaje;
+        this.email = email;
 
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getImagenPerfil() {
@@ -37,12 +46,13 @@ public class ChatList {
         this.nombre = nombre;
     }
 
-    public String getFecha() {
-        return fecha;
+
+    public String getMensaje() {
+        return mensaje;
     }
 
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
     }
 
     public String getCurrentId() {

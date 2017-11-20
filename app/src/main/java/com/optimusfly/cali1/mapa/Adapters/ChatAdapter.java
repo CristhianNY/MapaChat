@@ -78,7 +78,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             holder.frameImagen.setGravity(Gravity.RIGHT);
 
 
-            holder.boxMensaje.setBackground(ContextCompat.getDrawable(chatFragment.getContext(), R.drawable.round_blue));
+           // holder.boxMensaje.setBackground(ContextCompat.getDrawable(chatFragment.getContext(), R.drawable.round_blue));
             holder.mensajeRecivido.setTextColor(Color.WHITE);
 
         }else{

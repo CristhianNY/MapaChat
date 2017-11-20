@@ -39,6 +39,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
@@ -88,7 +89,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
     private Button mLogout, mRequest;
     private Marker mdriveMarker;
 
-    private double radius = 1;
+    private double radius = 500;
     private Boolean driverFound = false;
     private String driverFoundId;
     HashMap<Marker, Marcador> mDataMap = new HashMap<>();
@@ -107,6 +108,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
     private FragmentManager fragmentManager;
     private final static String TAG = "DashBoardActivity";
     private int mContainerId;
+    private Set<GeoQuery> geoQueries = new HashSet<>();
 
     View v;
     public MapaFragment() {
@@ -170,7 +172,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_list_chat, menu);
-        inflater.inflate(R.menu.usuarios_cerca_menu, menu);
+       // inflater.inflate(R.menu.usuarios_cerca_menu, menu);
        // Use filter.xml from step 1
     }
     @Override
@@ -178,6 +180,8 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
         int id = item.getItemId();
         if(id == R.id.usuarios){
             //Do whatever you want to do
+
+            removeListener();
             ListUserNearFragment listUserNearFragment = new ListUserNearFragment();
 
 
@@ -217,6 +221,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+    boolean isFirstLocation=false;
 
     @Override
     public void onLocationChanged(Location location) {
@@ -232,6 +237,13 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
 
 
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            if(!isFirstLocation)
+            {
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng , 19.0F));
+                isFirstLocation=true;
+            }
+           // mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
+            //mMap.animateCamera(CameraUpdateFactory.);
             //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
@@ -240,6 +252,8 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
                 DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("userAvailable");
                 //   DatabaseReference refworking = FirebaseDatabase.getInstance().getReference("driversWorking");
                 GeoFire geoFireAvailable = new GeoFire(refAvailable);
+
+
                 geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
             }
 
@@ -392,7 +406,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
                 Marker marker =markers.get(key);
                 if (marker != null) {
 
-                  //  animateMarkerTo(marker, location.latitude, location.longitude);
+                   animateMarkerTo(marker, location.latitude, location.longitude);
                 }
 
 
@@ -411,6 +425,19 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
 
 
         });
+        geoQueries.add(geoQuery);
+    }
+
+    private void  removeListener(){
+
+        for(GeoQuery geoQuery: geoQueries){
+
+            geoQuery.removeAllListeners();
+
+
+        }
+
+
     }
     private void animateMarkerTo(final Marker marker, final double lat, final double lng) {
 
@@ -455,6 +482,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onPause() {
         super.onPause();
+        removeListener();
         MapFragment mapFragment = (MapFragment) getActivity().getFragmentManager()
                 .findFragmentById(R.id.map);
 
@@ -474,17 +502,17 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        removeListener();
         MapFragment mapFragment = (MapFragment) getActivity().getFragmentManager()
                 .findFragmentById(R.id.map);
 
         if (mapFragment != null){
             getActivity().getFragmentManager().beginTransaction().remove(mapFragment).commit();
         }
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("userAvailable");
 
-        GeoFire geoFire  = new GeoFire(ref);
-        geoFire.removeLocation(userId);
+
+
     }
 
 

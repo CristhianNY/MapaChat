@@ -62,6 +62,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.Usuari
                 Bundle bundle = new Bundle();
 
                 bundle.putString("idUsuario",usuario.getIdUsuario());
+                bundle.putString("email",usuario.getIdUsuario());
                 PerfilFragment perfilFragment = new PerfilFragment();
                 perfilFragment.setArguments(bundle);
 
