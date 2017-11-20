@@ -407,6 +407,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
                 if (marker != null) {
 
                    animateMarkerTo(marker, location.latitude, location.longitude);
+                    mMap.getUiSettings().setMapToolbarEnabled(false);
                 }
 
 
