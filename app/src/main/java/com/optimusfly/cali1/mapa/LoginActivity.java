@@ -163,7 +163,8 @@ public class LoginActivity extends AppCompatActivity {
                                             // Log.i(LOG_TAG, profileImageUrl);
                                             String comentariokey = ref.push().getKey();
                                             Usuario usuarioFb  = new Usuario(
-                                                    me.optString("name"),email,profileImageUrl,idUsuarioFu,"regular",deviceToken,me.optString("id"));
+                                                    me.optString("name"),email,profileImageUrl,idUsuarioFu,"regular",deviceToken,me.optString("id"),me.optString("birthday")
+                                            ,me.optString("public_profile"));
 
                                             //   contectReview.setText("");
                                             ref.child(idUsuarioFu).setValue(usuarioFb);
@@ -258,7 +259,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         };
-        loginButton.setReadPermissions("email","user_friends");
+        loginButton.setReadPermissions("email","user_friends","public_profile","user_birthday");
 
         callbackManager = CallbackManager.Factory.create();
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {

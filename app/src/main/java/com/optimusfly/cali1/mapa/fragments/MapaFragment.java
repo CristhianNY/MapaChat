@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -83,31 +84,18 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationRequest mLocationRequest;
-    SupportMapFragment mapFragment;
 
-    private LatLng pickupLocation;
-    private Button mLogout, mRequest;
-    private Marker mdriveMarker;
+    private double radius = 900000;
 
-    private double radius = 500;
-    private Boolean driverFound = false;
-    private String driverFoundId;
-    HashMap<Marker, Marcador> mDataMap = new HashMap<>();
-    ArrayList<LatLng> locations = new ArrayList<LatLng>();
-    //ArrayList<Marcador> markers = new ArrayList<>();
-    private ArrayList<Marker> mMarkerArrayList;
-    HashMap<String, Marker> hashMapMarker = new HashMap<>();
-    List<Marker> mMarkers = new ArrayList<Marker>();
+
     private Map<String,Marker> markers;
-    private String customerId= "";
-    MapView mMapView;
-    private GoogleMap googleMap;
+
+
     private SupportMapFragment mSupportMapFragment;
     Marker m;
-    private FragmentTransaction fragmentTransaction;
-    private FragmentManager fragmentManager;
+
     private final static String TAG = "DashBoardActivity";
-    private int mContainerId;
+
     private Set<GeoQuery> geoQueries = new HashSet<>();
 
     View v;
@@ -197,8 +185,13 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
             return true;
         }
         if(id == R.id.listChat){
+            Bundle bundle = new Bundle();
+
+            bundle.putString("id","null");
 
             ChatListFragment chatListFragment = new ChatListFragment();
+
+            chatListFragment.setArguments(bundle);
 
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
@@ -233,7 +226,11 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
 
             double latitude = location.getLatitude();
 
-            showDriverMoving();
+          //  showDriverMoving();
+
+            ShowUserMaps th = new ShowUserMaps();
+
+            th.execute();
 
 
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -279,7 +276,151 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
 
     }
 
+public class ShowUserMaps extends AsyncTask<Void,Void,Void>{
+    @Override
+    protected Void doInBackground(Void... params) {
+        // DatabaseReference assingCustomerPickupLocation = FirebaseDatabase.getInstance().getReference().child("driversWorking").child("EAWIK2RZphYJyrihvkdARhFLueH3").child("l");
+        DatabaseReference refDriver = FirebaseDatabase.getInstance().getReference("userAvailable");
 
+//
+        //
+        final GeoFire geoFireAvailable = new GeoFire(refDriver);
+
+        final GeoLocation currentUserLocation = new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        final GeoQuery geoQuery = geoFireAvailable.queryAtLocation(currentUserLocation, radius);
+
+
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(final String claveUser, final GeoLocation location) {
+
+                DatabaseReference usuarioReferece = FirebaseDatabase.getInstance().getReference("usuario");
+                usuarioReferece.orderByChild("idUsuario").equalTo(claveUser).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        for (DataSnapshot snapshot:
+                                dataSnapshot.getChildren()
+                                ) {
+
+                            final Usuario userInfo = snapshot.getValue(Usuario.class);
+
+
+                            LatLng meetLatLng = new LatLng(location.latitude, location.longitude);
+
+
+                            Marker marker = markers.get(claveUser);
+                            if (marker != null) {
+                                marker.remove();
+                                markers.remove(claveUser);
+                            }
+
+
+
+                            m =   mMap.addMarker(new MarkerOptions().position(meetLatLng).title(userInfo.getUsuario()));
+                            m.setTag(userInfo.getIdUsuario());
+                            PicassoMarker mark = new PicassoMarker(m);
+                            Picasso.with(getActivity()).load(userInfo.getImagenPerfil()).resize(60,60).centerCrop().transform(new CropCircleTransformation()).into(mark);
+
+                            markers.put(claveUser,m);
+
+                            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener(){
+                                @Override
+                                public void onInfoWindowClick(Marker marker){
+
+
+
+
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("idUsuario",marker.getTag().toString());
+
+
+                                    PerfilFragment perfilFragment = new PerfilFragment();
+                                    perfilFragment.setArguments(bundle);
+
+                                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+// Replace whatever is in the fragment_container view with this fragment,
+// and add the transaction to the back stack if needed
+                                    transaction.replace(R.id.container, perfilFragment);
+                                    transaction.addToBackStack(null);
+
+// Commit the transaction
+                                    transaction.commit();
+
+                                }
+                            });
+
+
+
+
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+// runnersNearby.add(claveUser);
+
+//driverFound= true;
+//driverFoundId = claveUser;
+//getDriverLocation(claveUser);
+
+// additional code, like displaying a pin on the map
+// and adding Firebase listeners for this user
+            }
+
+
+            @Override public void onKeyExited(String key) {
+                // runnersNearby.remove(username);
+// additional code, like removing a pin from the map
+// and removing any Firebase listener for this user
+
+                Marker marker = markers.get(key);
+                if (marker != null) {
+                    marker.remove();
+                    markers.remove(key);
+                }
+
+            }
+
+            @Override public void onKeyMoved(String key, GeoLocation location) {
+
+//por aca entra?
+
+                Marker marker =markers.get(key);
+                if (marker != null) {
+
+                    animateMarkerTo(marker, location.latitude, location.longitude);
+                    mMap.getUiSettings().setMapToolbarEnabled(false);
+                }
+
+
+            }
+
+
+
+            @Override public void onGeoQueryReady() {
+
+            }
+
+            @Override public void onGeoQueryError(DatabaseError error) {
+                Toast.makeText(getActivity(), "There was an error with this query " + error, Toast.LENGTH_SHORT).show();
+
+            }
+
+
+        });
+        geoQueries.add(geoQuery);
+return null;
+    }
+}
 
     private void showDriverMoving() {
 
@@ -289,16 +430,14 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
 //
         //
         final GeoFire geoFireAvailable = new GeoFire(refDriver);
-        final Set<String> runnersNearby = new HashSet<String>();
+
         final GeoLocation currentUserLocation = new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude());
         final GeoQuery geoQuery = geoFireAvailable.queryAtLocation(currentUserLocation, radius);
-        // Query locationQuery = FirebaseDatabase.getInstance().getReference().child("driveravailable");
+
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(final String claveUser, final GeoLocation location) {
-                // DatabaseReference usuarioReferece = FirebaseDatabase.getInstance().getReference("usuario").child(claveUser)
-                //       .child("imagenPerfil");
 
                 DatabaseReference usuarioReferece = FirebaseDatabase.getInstance().getReference("usuario");
                 usuarioReferece.orderByChild("idUsuario").equalTo(claveUser).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -336,10 +475,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
 
 
 
-                                       /** Intent intent = new Intent(getActivity(), PerfilActivity.class);
-                                        intent.putExtra("idUsuario",marker.getTag().toString());
-                                        startActivity(intent);
-                                       getActivity().finish();**/
+
                                         Bundle bundle = new Bundle();
                                         bundle.putString("idUsuario",marker.getTag().toString());
 
@@ -440,6 +576,8 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
 
 
     }
+
+
     private void animateMarkerTo(final Marker marker, final double lat, final double lng) {
 
         final Handler handler = new Handler();

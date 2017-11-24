@@ -39,6 +39,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.optimusfly.cali1.mapa.fragments.ChatFragment;
 import com.optimusfly.cali1.mapa.fragments.ChatListFragment;
 import com.optimusfly.cali1.mapa.fragments.ListUserNearFragment;
 import com.optimusfly.cali1.mapa.fragments.MapaFragment;
@@ -67,11 +68,27 @@ public class MainActivity extends AppCompatActivity  implements  NavigationView.
 
 
 
-        MapaFragment mapaFragment = new MapaFragment();
-        //  MainFragment mainFragment = new MainFragment();
-        // principalFragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, mapaFragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
+        String id = getIntent().getStringExtra("id");
+
+        if(id != null){
+            Bundle bundle = new Bundle();
+
+            bundle.putString("id",id);
+
+
+            ChatListFragment chatListFragment = new ChatListFragment();
+            chatListFragment.setArguments(bundle);
+            FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.container,chatListFragment).commit();
+
+        }else{
+            MapaFragment mapaFragment = new MapaFragment();
+            //  MainFragment mainFragment = new MainFragment();
+            // principalFragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, mapaFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
+        }
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -132,7 +149,12 @@ public class MainActivity extends AppCompatActivity  implements  NavigationView.
         }
 
         if(id == R.id.chat){
+            Bundle bundle = new Bundle();
+
+            bundle.putString("id","null");
+
             ChatListFragment chatListFragment = new ChatListFragment();
+            chatListFragment.setArguments(bundle);
             FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.container,chatListFragment).commit();
         }

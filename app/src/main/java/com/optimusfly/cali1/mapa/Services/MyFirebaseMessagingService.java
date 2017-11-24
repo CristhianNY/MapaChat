@@ -55,12 +55,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String title = data.getString("title");
             String message = data.getString("message");
             String imageUrl = data.getString("image");
+            String id = data.getString("id");
 
             //creating MyNotificationManager object
             MyNotificationManager mNotificationManager = new MyNotificationManager(getApplicationContext());
 
             //creating an intent for the notification
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("id",id);
 
             //if there is no image
             if(imageUrl.equals("null")){

@@ -4,6 +4,7 @@ package com.optimusfly.cali1.mapa.fragments;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -153,9 +154,10 @@ public class ChatFragment extends DialogFragment {
 
 
         mensajes = new ArrayList<>();
-        cargarInfoChat();
+     //   cargarInfoChat();
 
-
+        CargarInfodelChat infochat =new CargarInfodelChat();
+        infochat.execute();
         // aca mostramos o capturamos la imagen de perfil
 
         DatabaseReference usuarioReferece = FirebaseDatabase.getInstance().getReference("usuario");
@@ -215,11 +217,12 @@ public class ChatFragment extends DialogFragment {
          }
 
     private void sendSinglePush(String mensaje){
-
+        usuario = FirebaseAuth.getInstance().getCurrentUser();
 
         final String message = mensaje;
         final String title = "Chat";
         final String image = "";
+        final String id = usuario.getUid();
         final String email = idUsuario;
 
 
@@ -243,6 +246,7 @@ public class ChatFragment extends DialogFragment {
                 Map<String, String> params = new HashMap<>();
                 params.put("title", title);
                 params.put("message", message);
+                params.put("id",id);
 
                 if (!TextUtils.isEmpty(image))
                     params.put("image", image);
@@ -254,6 +258,60 @@ public class ChatFragment extends DialogFragment {
 
         MyVolley.getInstance(getActivity()).addToRequestQueue(stringRequest);
 
+    }
+
+    public class CargarInfodelChat extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            usuario = FirebaseAuth.getInstance().getCurrentUser();
+
+            final DatabaseReference ref = database.getReference().child(References.CHAT+"/"+idUsuario+"_"+usuario.getUid());
+
+
+
+
+
+            ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    mensajes.removeAll(mensajes);
+
+                    for (DataSnapshot snapshop:
+                            dataSnapshot.getChildren()
+                            ) {
+
+                        // contador2 = contador2 +1;
+                        Mensaje comentario = snapshop.getValue(Mensaje.class);
+
+                        //        comentario.getRating();
+                        //    calificacion =  calificacion + Float.parseFloat(comentario.getRating());
+
+                        mensajes.add(comentario);
+                        adapter = new ChatAdapter(mensajes,ChatFragment.this);
+                        recyclerViewChat.setAdapter(adapter);
+
+                        //   adapter.notifyDataSetChanged();
+                        // rb.setRating(calificacion/contador2);
+
+                        recyclerViewChat.smoothScrollToPosition(adapter.getItemCount());
+                        adapter.notifyDataSetChanged();
+                    }
+
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
+            return null;
+        }
     }
 
     public void cargarInfoChat(){
@@ -316,7 +374,8 @@ public class ChatFragment extends DialogFragment {
         final DatabaseReference refusuarios = database.getReference(References.USUARIO + "/"+idUsuario);
         final DatabaseReference ref = database.getReference().child(References.CHAT+"/"+idUsuario+"_"+usuario.getUid());
         final DatabaseReference ref2 = database.getReference().child(References.CHAT+"/"+usuario.getUid()+"_"+idUsuario);
-
+        adapter = new ChatAdapter(mensajes,this);
+        recyclerViewChat.setAdapter(adapter);
         refusuarios.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot2) {
@@ -342,7 +401,50 @@ public class ChatFragment extends DialogFragment {
 
                             reflistchat.setValue(chatlist);
                             reflistchat2.setValue(chatlist2);
+                            if (AccessToken.getCurrentAccessToken() != null) {
 
+                                GraphRequest request = GraphRequest.newMeRequest(
+                                        AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                                            @Override
+                                            public void onCompleted(final JSONObject me, GraphResponse response) {
+
+                                                if (AccessToken.getCurrentAccessToken() != null) {
+
+                                                    if (me != null) {
+
+                                                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                                String profileImageUrl = ImageRequest.getProfilePictureUri(me.optString("id"), 500, 500).toString();
+                                                                // Log.i(LOG_TAG, profileImageUrl);
+                                                                String comentariokey = ref.push().getKey();
+
+                                                                //String valorCalificacion = Float.toString(calificacion);
+
+                                                                Mensaje m = new Mensaje(mensaje,profileImageUrl,"1","00:00",usuario.getUid());
+
+                                                                //   contectReview.setText("");
+                                                                ref.push().setValue(m);
+                                                                ref2.push().setValue(m);
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(DatabaseError databaseError) {
+
+                                                            }
+                                                        });
+
+
+
+
+
+                                                    }
+                                                }
+                                            }
+                                        });
+                                GraphRequest.executeBatchAsync(request);
+                            }
 
                         }
 
@@ -366,54 +468,12 @@ public class ChatFragment extends DialogFragment {
             public void onCancelled(DatabaseError databaseError) {
 
             }
+
+
         });
-        adapter = new ChatAdapter(mensajes,this);
-        recyclerViewChat.setAdapter(adapter);
-
-        if (AccessToken.getCurrentAccessToken() != null) {
-
-            GraphRequest request = GraphRequest.newMeRequest(
-                    AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-                        @Override
-                        public void onCompleted(final JSONObject me, GraphResponse response) {
-
-                            if (AccessToken.getCurrentAccessToken() != null) {
-
-                                if (me != null) {
-
-                                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                            String profileImageUrl = ImageRequest.getProfilePictureUri(me.optString("id"), 500, 500).toString();
-                                            // Log.i(LOG_TAG, profileImageUrl);
-                                            String comentariokey = ref.push().getKey();
-
-                                            //String valorCalificacion = Float.toString(calificacion);
-
-                                            Mensaje m = new Mensaje(mensaje,profileImageUrl,"1","00:00",usuario.getUid());
-
-                                            //   contectReview.setText("");
-                                            ref.push().setValue(m);
-                                            ref2.push().setValue(m);
-                                        }
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-
-                                        }
-                                    });
 
 
 
-
-
-                                }
-                            }
-                        }
-                    });
-            GraphRequest.executeBatchAsync(request);
-        }
     }
 
 }

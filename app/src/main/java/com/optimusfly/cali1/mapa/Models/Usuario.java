@@ -15,11 +15,12 @@ public class Usuario {
     private String tipoUser;
     private String deviceToken;
     private String urlPerfil;
+    private String birthday,publicProfile;
     public Usuario(){
 
     }
 
-    public Usuario(String usuario, String email, String imagenPerfil, String idUsuario, String tipoUser, String deviceToken,String urlPerfil) {
+    public Usuario(String usuario, String email, String imagenPerfil, String idUsuario, String tipoUser, String deviceToken,String urlPerfil,String birthday, String publicProfile) {
         this.usuario = usuario;
         this.email = email;
         this.imagenPerfil = imagenPerfil;
@@ -27,6 +28,25 @@ public class Usuario {
         this.tipoUser = tipoUser;
         this.deviceToken = deviceToken;
         this.urlPerfil = urlPerfil;
+        this.birthday = birthday;
+        this.publicProfile = publicProfile;
+
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getPublicProfile() {
+        return publicProfile;
+    }
+
+    public void setPublicProfile(String publicProfile) {
+        this.publicProfile = publicProfile;
     }
 
     public String getUrlPerfil() {

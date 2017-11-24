@@ -19,10 +19,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.optimusfly.cali1.mapa.Adapters.ListChatAdapter;
 import com.optimusfly.cali1.mapa.Models.ChatList;
+import com.optimusfly.cali1.mapa.Models.Usuario;
 import com.optimusfly.cali1.mapa.R;
 import com.optimusfly.cali1.mapa.References;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,6 +36,7 @@ public class ChatListFragment extends Fragment {
     private List<ChatList> chatlists;
     private ListChatAdapter listChatAdapter;
     private FirebaseUser usuario;
+    private String id;
     View v;
 
 
@@ -60,6 +63,19 @@ public class ChatListFragment extends Fragment {
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
+        id = this.getArguments().getString("id");
+
+        if(id != "null"){
+            final ChatFragment fragmentChat = new ChatFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("idUsuario",id);
+            bundle.putString("email",id);
+            fragmentChat.setArguments(bundle);
+            fragmentChat.show(getFragmentManager(),"chat");
+
+
+        }
+
 
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_chat_list);
