@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -35,12 +36,14 @@ import com.facebook.login.LoginManager;
 import com.firebase.geofire.GeoFire;
 import com.google.android.gms.maps.MapFragment;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.optimusfly.cali1.mapa.fragments.ChatFragment;
 import com.optimusfly.cali1.mapa.fragments.ChatListFragment;
+import com.optimusfly.cali1.mapa.fragments.HomeMap;
 import com.optimusfly.cali1.mapa.fragments.ListUserNearFragment;
 import com.optimusfly.cali1.mapa.fragments.MapaFragment;
 
@@ -52,11 +55,11 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity  implements  NavigationView.OnNavigationItemSelectedListener{
 
-    private Button cliente,driver;
     final int LOCATION_REQUEST_CODE = 1;
     private static final String TAG = "MainActivity";
     private Boolean permisos = false;
     private ProgressDialog progressDialog;
+    private static int SPLASH_TIME_OUT = 4000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,39 +71,52 @@ public class MainActivity extends AppCompatActivity  implements  NavigationView.
 
 
 
+
         String id = getIntent().getStringExtra("id");
+        FirebaseUser currentUser =FirebaseAuth.getInstance().getCurrentUser();
 
-        if(id != null){
-            Bundle bundle = new Bundle();
+        if(currentUser != null){
+            if(id != null){
+                Bundle bundle = new Bundle();
 
-            bundle.putString("id",id);
+                bundle.putString("id",id);
 
 
-            ChatListFragment chatListFragment = new ChatListFragment();
-            chatListFragment.setArguments(bundle);
-            FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.container,chatListFragment).commit();
+                ChatListFragment chatListFragment = new ChatListFragment();
+                chatListFragment.setArguments(bundle);
+                FragmentManager manager = getSupportFragmentManager();
+                manager.beginTransaction().replace(R.id.container,chatListFragment).commit();
+
+            }else{
+               /** MapaFragment mapaFragment = new MapaFragment();
+                //  MainFragment mainFragment = new MainFragment();
+                // principalFragment.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction().replace(R.id.container, mapaFragment)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();**/
+                HomeMap mapaFragment = new HomeMap();
+                getSupportFragmentManager().beginTransaction().replace(R.id.container, mapaFragment)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
+            }
+
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.setDrawerListener(toggle);
+            toggle.syncState();
+
+
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            navigationView.setNavigationItemSelectedListener(this);
+            View hView =  navigationView.getHeaderView(0);
 
         }else{
-            MapaFragment mapaFragment = new MapaFragment();
-            //  MainFragment mainFragment = new MainFragment();
-            // principalFragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, mapaFragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null).commit();
+
+            Intent myIntent = new Intent( this, LoginActivity.class);
+            startActivityForResult(myIntent, 0);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        View hView =  navigationView.getHeaderView(0);
     }
 
 
@@ -135,8 +151,8 @@ public class MainActivity extends AppCompatActivity  implements  NavigationView.
         int id = item.getItemId();
         if(id == R.id.mapa){
             //Do whatever you want to do
-            MapaFragment mapaFragment = new MapaFragment();
-
+         //   MapaFragment mapaFragment = new MapaFragment();
+            HomeMap mapaFragment = new HomeMap();
             //  MainFragment mainFragment = new MainFragment();
             // principalFragment.setArguments(bundle);
             FragmentManager manager = getSupportFragmentManager();
@@ -148,6 +164,20 @@ public class MainActivity extends AppCompatActivity  implements  NavigationView.
 
         }
 
+        if(id == R.id.userNearList){
+            //Do whatever you want to do
+            ListUserNearFragment listUserNearFragment = new ListUserNearFragment();
+
+            //  MainFragment mainFragment = new MainFragment();
+            // principalFragment.setArguments(bundle);
+            FragmentManager manager = getSupportFragmentManager();
+
+            manager.beginTransaction().replace(R.id.container,listUserNearFragment).commit();
+
+
+
+
+        }
         if(id == R.id.chat){
             Bundle bundle = new Bundle();
 

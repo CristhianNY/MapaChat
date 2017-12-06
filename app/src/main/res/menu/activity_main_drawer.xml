@@ -11,6 +11,10 @@
             android:icon="@drawable/chat"
             android:title="@string/chat" />
         <item
+            android:id="@+id/userNearList"
+            android:icon="@drawable/chat"
+            android:title="@string/listaUsuariosCerca" />
+        <item
             android:id="@+id/salir"
             android:icon="@drawable/salir"
             android:title="@string/exit" />

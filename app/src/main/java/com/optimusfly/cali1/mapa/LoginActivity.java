@@ -138,6 +138,69 @@ public class LoginActivity extends AppCompatActivity {
         }
 
     }
+    public void consultarUsuarioFacebook(
+            final String profileImageUrl, final String idUsuarioFu,
+
+           final String deviceToken){
+
+
+       FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference ref = database.getReference(References.USUARIO);
+        usuario = FirebaseAuth.getInstance().getCurrentUser();
+        GraphRequest request = GraphRequest.newMeRequest(
+                AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject userMe, GraphResponse response) {
+
+                        if(userMe!=null){
+                            //...... do your things
+                            Usuario usuarioFb  = new Usuario(
+                                    userMe.optString("name"),
+                                    userMe.optString("email"),
+                                    profileImageUrl,
+                                    idUsuarioFu,
+                                    "regular",
+                                    deviceToken,
+                                   "https://www.facebook.com/"+ userMe.optString("id"),
+                                    userMe.optString("birthday"),
+                                    "");
+
+                            ref.child(idUsuarioFu).setValue(usuarioFb);
+                        }
+                    }
+
+                });
+        Bundle parameters = new Bundle();
+
+//Add the fields that you need, you dont forget add the right permission
+        parameters.putString("fields","email,id,name,picture,birthday");
+        request.setParameters(parameters);
+
+//Now you can execute
+        GraphRequest.executeBatchAsync(request);
+    }
+
+    public void consultarDatosFb(  final String profileImageUrl, final String idUsuarioFu){
+        GraphRequest request = GraphRequest.newMeRequest(
+                AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject userMe, GraphResponse response) {
+                        if(userMe!=null){
+                            //...... do your things
+
+                        }
+                    }
+                });
+
+        Bundle parameters = new Bundle();
+
+//Add the fields that you need, you dont forget add the right permission
+        parameters.putString("fields","email,id,name,picture,birthday");
+        request.setParameters(parameters);
+
+//Now you can execute
+        GraphRequest.executeBatchAsync(request);
+    }
 
     final int LOCATION_REQUEST_CODE = 1;
     private void insertarUsuario(final String idUsuarioFu, final  String email, final String deviceToken){
@@ -163,9 +226,19 @@ public class LoginActivity extends AppCompatActivity {
                                             // Log.i(LOG_TAG, profileImageUrl);
                                             String comentariokey = ref.push().getKey();
                                             Usuario usuarioFb  = new Usuario(
-                                                    me.optString("name"),email,profileImageUrl,idUsuarioFu,"regular",deviceToken,me.optString("id"),me.optString("birthday")
+                                                    me.optString("name"),
+                                                    email,profileImageUrl,
+                                                    idUsuarioFu,
+                                                    "regular",
+                                                    deviceToken,
+                                                    me.optString("id"),
+                                                    me.optString("birthday")
                                             ,me.optString("public_profile"));
 
+                                            consultarUsuarioFacebook(
+                                                    profileImageUrl,idUsuarioFu,deviceToken
+                                                    );
+                                            consultarDatosFb(  profileImageUrl,idUsuarioFu);
                                             //   contectReview.setText("");
                                             ref.child(idUsuarioFu).setValue(usuarioFb);
                                         }
@@ -363,6 +436,7 @@ public class LoginActivity extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
     }
+
 
 
     public void handledFacebookAccessToken(final AccessToken accessToken) {

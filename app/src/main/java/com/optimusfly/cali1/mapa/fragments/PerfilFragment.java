@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -30,6 +31,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.optimusfly.cali1.mapa.Adapters.SliderAdapter;
+import com.optimusfly.cali1.mapa.LoginActivity;
 import com.optimusfly.cali1.mapa.Models.ChatList;
 import com.optimusfly.cali1.mapa.Models.Usuario;
 import com.optimusfly.cali1.mapa.R;
@@ -37,8 +39,11 @@ import com.optimusfly.cali1.mapa.References;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import static android.R.attr.data;
 import static android.R.attr.key;
@@ -48,16 +53,13 @@ import static android.R.attr.key;
  */
 public class PerfilFragment extends Fragment {
     private ViewPager viewPager;
-    private ImageButton rightNav ,leftNav;
     private SliderAdapter adapter;
     private ArrayList<String> IMAGES = new ArrayList<>();
     private Button btnStartChat,abrirPerfil;
     private String idUsuario,email;
+    private TextView edad,nombredeUsuario;
     private FirebaseUser usuario;
-    private int mContainerId;
-    private FirebaseUser currentUser;
     private FragmentTransaction fragmentTransaction;
-    private FragmentManager fragmentManager;
     private final static String TAG = "DashBoardActivity";
 
     public PerfilFragment() {
@@ -75,8 +77,11 @@ public class PerfilFragment extends Fragment {
 
         btnStartChat = (Button) v.findViewById(R.id.btn_start_chat) ;
         viewPager =(ViewPager) v.findViewById(R.id.view_pager);
-        rightNav = (ImageButton) v.findViewById(R.id.right_nav);
-        leftNav = (ImageButton) v.findViewById(R.id.left_nav);
+        /**rightNav = (ImageButton) v.findViewById(R.id.right_nav);
+        leftNav = (ImageButton) v.findViewById(R.id.left_nav);**/
+
+        nombredeUsuario = (TextView) v.findViewById(R.id.nombredeUsuario);
+        edad = (TextView) v.findViewById(R.id.age);
         idUsuario = this.getArguments().getString("idUsuario");
         email = this.getArguments().getString("email");
 
@@ -119,8 +124,30 @@ public class PerfilFragment extends Fragment {
             public void onClick(View v) {
                 try{
 
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("fb://profile/cristhian4545"));
-                    startActivity(intent);
+
+
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    final DatabaseReference ref= database.getReference("usuario/"+idUsuario+"/urlPerfil");
+
+                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            String value = (String) dataSnapshot.getValue();
+
+                            // do your stuff here with value
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(value));
+                            startActivity(intent);
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+
+
+                    });
+
 
                 }catch(Exception e){
 
@@ -129,6 +156,8 @@ public class PerfilFragment extends Fragment {
                 }
             }
         });
+        
+        cargarInformacionUsuario(idUsuario);
         btnStartChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -194,7 +223,56 @@ public class PerfilFragment extends Fragment {
 
 
     }
-    @Override
+
+    private void cargarInformacionUsuario(String id) {
+
+        final DatabaseReference usuarioReferece = FirebaseDatabase.getInstance().getReference("usuario");
+
+        usuarioReferece.orderByChild("idUsuario").equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snapshot:
+                        dataSnapshot.getChildren()
+                        ) {
+
+                    final Usuario userInfo = snapshot.getValue(Usuario.class);
+                    nombredeUsuario.setText(userInfo.getUsuario());
+
+                    if(userInfo.getBirthday().toString().length() != 0){
+
+
+
+                        String date = userInfo.getBirthday();
+
+
+                        String[] calend = date.split("/");
+                        int month = Integer.parseInt(calend[1]);
+                        int day = Integer.parseInt(calend[0]);
+                        int year = Integer.parseInt(calend[2]);
+
+                        int userEdad =   getAge(year,month,day);
+
+                        String EdadUsuario = String.valueOf(userEdad);
+
+                        edad.setText(EdadUsuario);
+                    }
+
+
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+   /** @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -205,6 +283,8 @@ public class PerfilFragment extends Fragment {
         inflater.inflate(R.menu.usuarios_cerca_menu, menu);
         // Use filter.xml from step 1
     }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -240,22 +320,50 @@ public class PerfilFragment extends Fragment {
 
         return super.onOptionsItemSelected(item);
     }
-    public void replaceFragment(Fragment fragment, String TAG) {
 
-        try {
-            Bundle bundle = new Bundle();
-            String myMessage = "Stackoverflow is cool!";
-            bundle.putString("message", myMessage );
-            fragment.setArguments(bundle);
-            fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(mContainerId, fragment, TAG);
-            fragmentTransaction.addToBackStack(TAG);
-            fragmentTransaction.commitAllowingStateLoss();
+    **/
+ // arreglar el problema de la edad . sale mal
 
-        } catch (Exception e) {
-            // TODO: handle exception
+    private int getAge(int year, int month, int day){
+        GregorianCalendar cal = new GregorianCalendar();
+        int y, m, d, a;
+
+        y = cal.get(Calendar.YEAR);
+        m = cal.get(Calendar.MONTH);
+        d = cal.get(Calendar.DAY_OF_MONTH);
+        cal.set(year, month, day);
+        a = y - cal.get(Calendar.YEAR);
+        if ((m < cal.get(Calendar.MONTH))
+                || ((m == cal.get(Calendar.MONTH)) && (d < cal
+                .get(Calendar.DAY_OF_MONTH)))) {
+            --a;
         }
-
+        if(a < 0)
+            throw new IllegalArgumentException("Age < 0");
+        return a;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseUser currentUser =FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser!= null){
+
+        }else{
+            Intent myIntent = new Intent( getActivity(), LoginActivity.class);
+            startActivityForResult(myIntent, 0);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseUser currentUser =FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser!= null){
+
+        }else{
+            Intent myIntent = new Intent( getActivity(), LoginActivity.class);
+            startActivityForResult(myIntent, 0);
+        }
+    }
 }

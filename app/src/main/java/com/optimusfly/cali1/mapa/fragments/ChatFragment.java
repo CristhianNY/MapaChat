@@ -2,6 +2,7 @@ package com.optimusfly.cali1.mapa.fragments;
 
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -41,6 +42,7 @@ import com.optimusfly.cali1.mapa.Adapters.ChatAdapter;
 import com.optimusfly.cali1.mapa.Adapters.SliderAdapter;
 import com.optimusfly.cali1.mapa.Dibujos.BubbleTransformation;
 import com.optimusfly.cali1.mapa.EndPoints;
+import com.optimusfly.cali1.mapa.LoginActivity;
 import com.optimusfly.cali1.mapa.Models.ChatList;
 import com.optimusfly.cali1.mapa.Models.Mensaje;
 import com.optimusfly.cali1.mapa.Models.MyVolley;
@@ -475,5 +477,16 @@ public class ChatFragment extends DialogFragment {
 
 
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseUser currentUser =FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser!= null){
 
+        }else{
+            Intent myIntent = new Intent( getActivity(), LoginActivity.class);
+            startActivityForResult(myIntent, 0);
+        }
+
+    }
 }

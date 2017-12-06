@@ -2,6 +2,7 @@ package com.optimusfly.cali1.mapa.fragments;
 
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -37,6 +38,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,6 +46,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.optimusfly.cali1.mapa.Adapters.UserListAdapter;
 import com.optimusfly.cali1.mapa.Dibujos.BubbleTransformation;
+import com.optimusfly.cali1.mapa.LoginActivity;
 import com.optimusfly.cali1.mapa.Models.Marcador;
 import com.optimusfly.cali1.mapa.Models.Usuario;
 import com.optimusfly.cali1.mapa.Models.UsuarioCerca;
@@ -294,5 +297,29 @@ public class ListUserNearFragment extends Fragment implements LocationListener, 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseUser currentUser =FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser!= null){
+
+        }else{
+            Intent myIntent = new Intent( getActivity(), LoginActivity.class);
+            startActivityForResult(myIntent, 0);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseUser currentUser =FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser!= null){
+
+        }else{
+            Intent myIntent = new Intent( getActivity(), LoginActivity.class);
+            startActivityForResult(myIntent, 0);
+        }
     }
 }

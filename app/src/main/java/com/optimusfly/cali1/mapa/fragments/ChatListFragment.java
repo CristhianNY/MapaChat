@@ -1,6 +1,7 @@
 package com.optimusfly.cali1.mapa.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.optimusfly.cali1.mapa.Adapters.ListChatAdapter;
+import com.optimusfly.cali1.mapa.LoginActivity;
 import com.optimusfly.cali1.mapa.Models.ChatList;
 import com.optimusfly.cali1.mapa.Models.Usuario;
 import com.optimusfly.cali1.mapa.R;
@@ -142,6 +144,28 @@ public class ChatListFragment extends Fragment {
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseUser currentUser =FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser!= null){
 
+        }else{
+            Intent myIntent = new Intent( getActivity(), LoginActivity.class);
+            startActivityForResult(myIntent, 0);
+        }
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseUser currentUser =FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser!= null){
+
+        }else{
+            Intent myIntent = new Intent( getActivity(), LoginActivity.class);
+            startActivityForResult(myIntent, 0);
+        }
+    }
 }

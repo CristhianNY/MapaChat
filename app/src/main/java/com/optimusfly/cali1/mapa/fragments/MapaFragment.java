@@ -59,6 +59,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.koushikdutta.ion.Ion;
 import com.optimusfly.cali1.mapa.CustomerMapaActivity;
 import com.optimusfly.cali1.mapa.Dibujos.BubbleTransformation;
+import com.optimusfly.cali1.mapa.LoginActivity;
 import com.optimusfly.cali1.mapa.Models.Marcador;
 import com.optimusfly.cali1.mapa.Models.Usuario;
 import com.optimusfly.cali1.mapa.PerfilActivity;
@@ -135,8 +136,8 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
     public void onConnected(@Nullable Bundle bundle) {
 
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(9000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -150,7 +151,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
-
+/**
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -205,6 +206,8 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
 
         return super.onOptionsItemSelected(item);
     }
+
+    **/
     @Override
     public void onConnectionSuspended(int i) {
 
@@ -224,7 +227,6 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
         if (getActivity() != null) {
 
 
-            double latitude = location.getLatitude();
 
           //  showDriverMoving();
 
@@ -237,6 +239,8 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
             if(!isFirstLocation)
             {
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng , 19.0F));
+
+
                 isFirstLocation=true;
             }
            // mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
@@ -254,6 +258,9 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Google
                 geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
             }
 
+        }else{
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            getActivity().startActivity(intent);
         }
     }
     @Override
@@ -420,165 +427,7 @@ public class ShowUserMaps extends AsyncTask<Void,Void,Void>{
         geoQueries.add(geoQuery);
 return null;
     }
-}
-
-    private void showDriverMoving() {
-
-        // DatabaseReference assingCustomerPickupLocation = FirebaseDatabase.getInstance().getReference().child("driversWorking").child("EAWIK2RZphYJyrihvkdARhFLueH3").child("l");
-        DatabaseReference refDriver = FirebaseDatabase.getInstance().getReference("userAvailable");
-
-//
-        //
-        final GeoFire geoFireAvailable = new GeoFire(refDriver);
-
-        final GeoLocation currentUserLocation = new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        final GeoQuery geoQuery = geoFireAvailable.queryAtLocation(currentUserLocation, radius);
-
-
-        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-            @Override
-            public void onKeyEntered(final String claveUser, final GeoLocation location) {
-
-                DatabaseReference usuarioReferece = FirebaseDatabase.getInstance().getReference("usuario");
-                usuarioReferece.orderByChild("idUsuario").equalTo(claveUser).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        for (DataSnapshot snapshot:
-                                dataSnapshot.getChildren()
-                                ) {
-
-                            final Usuario userInfo = snapshot.getValue(Usuario.class);
-
-
-                                LatLng meetLatLng = new LatLng(location.latitude, location.longitude);
-
-
-                                Marker marker = markers.get(claveUser);
-                                if (marker != null) {
-                                    marker.remove();
-                                    markers.remove(claveUser);
-                                }
-
-
-
-                                m =   mMap.addMarker(new MarkerOptions().position(meetLatLng).title(userInfo.getUsuario()));
-                                m.setTag(userInfo.getIdUsuario());
-                                PicassoMarker mark = new PicassoMarker(m);
-                                Picasso.with(getActivity()).load(userInfo.getImagenPerfil()).resize(60,60).centerCrop().transform(new CropCircleTransformation()).into(mark);
-
-                                markers.put(claveUser,m);
-
-                                mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener(){
-                                    @Override
-                                    public void onInfoWindowClick(Marker marker){
-
-
-
-
-                                        Bundle bundle = new Bundle();
-                                        bundle.putString("idUsuario",marker.getTag().toString());
-
-
-                                        PerfilFragment perfilFragment = new PerfilFragment();
-                                        perfilFragment.setArguments(bundle);
-
-                                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-// Replace whatever is in the fragment_container view with this fragment,
-// and add the transaction to the back stack if needed
-                                        transaction.replace(R.id.container, perfilFragment);
-                                        transaction.addToBackStack(null);
-
-// Commit the transaction
-                                        transaction.commit();
-
-                                    }
-                                });
-
-
-
-
-
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-
-// runnersNearby.add(claveUser);
-
-//driverFound= true;
-//driverFoundId = claveUser;
-//getDriverLocation(claveUser);
-
-// additional code, like displaying a pin on the map
-// and adding Firebase listeners for this user
-            }
-
-
-            @Override public void onKeyExited(String key) {
-                // runnersNearby.remove(username);
-// additional code, like removing a pin from the map
-// and removing any Firebase listener for this user
-
-                Marker marker = markers.get(key);
-                if (marker != null) {
-                    marker.remove();
-                    markers.remove(key);
-                }
-
-            }
-
-            @Override public void onKeyMoved(String key, GeoLocation location) {
-
-//por aca entra?
-
-                Marker marker =markers.get(key);
-                if (marker != null) {
-
-                   animateMarkerTo(marker, location.latitude, location.longitude);
-                    mMap.getUiSettings().setMapToolbarEnabled(false);
-                }
-
-
-            }
-
-
-
-            @Override public void onGeoQueryReady() {
-
-            }
-
-            @Override public void onGeoQueryError(DatabaseError error) {
-                Toast.makeText(getActivity(), "There was an error with this query " + error, Toast.LENGTH_SHORT).show();
-
-            }
-
-
-        });
-        geoQueries.add(geoQuery);
-    }
-
-    private void  removeListener(){
-
-        for(GeoQuery geoQuery: geoQueries){
-
-            geoQuery.removeAllListeners();
-
-
-        }
-
-
-    }
-
-
-    private void animateMarkerTo(final Marker marker, final double lat, final double lng) {
+    public void animateMarkerTo(final Marker marker, final double lat, final double lng) {
 
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
@@ -603,6 +452,23 @@ return null;
             }
         });
     }
+
+}
+
+
+    private void  removeListener(){
+
+        for(GeoQuery geoQuery: geoQueries){
+
+            geoQuery.removeAllListeners();
+
+
+        }
+
+
+    }
+
+
 
     protected synchronized void buildGoogleApiCliente(){
 

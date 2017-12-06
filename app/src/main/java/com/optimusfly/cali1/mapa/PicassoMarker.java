@@ -36,7 +36,11 @@ public class PicassoMarker implements Target {
 
     @Override
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from)         {
-        mMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+
+        if(bitmap!= null && from != null){
+            mMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+        }
+
 
 
     }

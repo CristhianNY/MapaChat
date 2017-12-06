@@ -19,7 +19,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/search_mag_icon"
+                android:id="@+id/nombredeUsuario"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
@@ -37,20 +37,20 @@
                     android:id="@+id/view_pager"
                     android:layout_width="match_parent"
                     android:layout_height="400dp" />
-                <ImageButton
+               <!-- <ImageButton
                     android:id="@+id/left_nav"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_gravity="center_vertical|left"
                     android:src="@drawable/espalda"
-                    android:background="@android:color/transparent"/>
-                <ImageButton
+                    android:background="@android:color/transparent"/>-->
+              <!--  <ImageButton
                     android:id="@+id/right_nav"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_gravity="center_vertical|right"
                     android:src="@drawable/proximo"
-                    android:background="@android:color/transparent"/>
+                    android:background="@android:color/transparent"/>-->
             </FrameLayout>
             <Button
                 android:id="@+id/abrir_perfil"
@@ -72,19 +72,18 @@
 
                 >
 
-               <TextView
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:text="@string/distancia"/>
+                <TextView
+                    android:id="@+id/age"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/noEdad"
+                    android:textSize="35sp" />
+
+
 
             </RelativeLayout>
-
-            <TextView
-                android:id="@+id/content_descripcion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="  Got Fiesta?... We got the music!! LOS REYES MARIACHI-QUARTET is a very unique and versatile trio. Like no other, we perform a wide variety of styles and rhythms that represent the traditional Mexican music, mariachi, and latin-american folkloric music, like romantic boleros, cha-cha-cha, rancheras, cumbias, huapangos, sones, and fast paced rhythms typical from Veracruz like La Bamba, El Tilingo-Lingo, etc. We are experienced musicians with well over 1,500 songs in our repertory. The." />
 
 
 

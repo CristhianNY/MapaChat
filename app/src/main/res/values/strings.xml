@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mapa</string>
+    <string name="app_name">Trione Map</string>
     <string name="conductor">Soy conductor</string>
     <string name="cliente">Soy Cliente</string>
     <string name="login">Login</string>
@@ -44,4 +44,11 @@
     <string name="saliendo">Saliendo</string>
     <string name="exit">Salir</string>
     <string name="abrir_perfil_facebook">Abrir Perfil De Facebook</string>
+    <string name="edad">Edad</string>
+    <string name="noEdad" />
+    <string name="listaUsuariosCerca">Ver Usuarios en lista</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
