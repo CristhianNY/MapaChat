@@ -5,11 +5,46 @@
     tools:context="com.optimusfly.cali1.mapa.fragments.HomeMap">
 
     <!-- TODO: Update blank fragment layout -->
+
+
+
     <fragment
         android:id="@+id/mapHome"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+    <ImageView
+        android:id="@+id/currentLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/location"
+        android:layout_gravity="right"
+        android:layout_margin="16dp"
+        />
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom|right"
+    >
+
+    <Button
+        android:layout_margin="16dp"
+        android:id="@+id/prederGPS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bordes_redondos"
+        android:textColor="@color/blanco"
+        android:text="@string/prenderGPS"/>
+    <Button
+        android:layout_margin="16dp"
+        android:id="@+id/controlGPS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bordes_redondos"
+        android:textColor="@color/blanco"
+
+        android:text="@string/controlGps"/>
+</LinearLayout>
 
 
 

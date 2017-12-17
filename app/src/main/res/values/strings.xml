@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Trione Map</string>
+    <string name="app_name">Trineo Map</string>
     <string name="conductor">Soy conductor</string>
     <string name="cliente">Soy Cliente</string>
     <string name="login">Login</string>
@@ -51,4 +51,13 @@
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="apagarGPS">Apagar Gps</string>
+    <string name="prenderGPS">Prender Gps</string>
+    <string name="invitar">Invitar Amigos</string>
+    <string name="invitation_title">Usemos Trineo Map</string>
+    <string name="invitation_message">Encontre esta aplicacion, te recomiendo descargarla</string>
+    <string name="invitation_deep_link"><![CDATA[https://play.google.com/store/apps/details?id=com.optimusfly.cali1.mapa&hl=en]]></string>
+    <string name="invitation_custom_image">https://lh3.googleusercontent.com/7665l2efBStm0F1bqGihQBwnKRiet9iAt-qGxGD2Ix_o72iMaqe3AKtC6WT0-wb2f1s=w300-rw</string>
+    <string name="invitation_cta">Instalar</string>
+    <string name="controlGps">Control GPS</string>
 </resources>

@@ -15,9 +15,14 @@
             android:icon="@drawable/chat"
             android:title="@string/listaUsuariosCerca" />
         <item
-            android:id="@+id/salir"
-            android:icon="@drawable/salir"
-            android:title="@string/exit" />
+            android:id="@+id/invite"
+            android:icon="@drawable/chat"
+            android:title="@string/invitar" />
+
+        <item
+        android:id="@+id/salir"
+        android:icon="@drawable/salir"
+        android:title="@string/exit" />
 
 
     </group>

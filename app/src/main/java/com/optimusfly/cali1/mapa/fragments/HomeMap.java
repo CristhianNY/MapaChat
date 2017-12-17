@@ -2,7 +2,9 @@ package com.optimusfly.cali1.mapa.fragments;
 
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -12,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -25,6 +28,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +46,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -77,12 +83,16 @@ public class HomeMap extends Fragment implements OnMapReadyCallback, GoogleApiCl
     private Map<String, Marker> markers;
     GoogleApiClient mGoogleApiClient;
     Marker m;
+    boolean GpsStatus;
+    private Button controlGps,prenderGps;
+    ImageView btnCurrentLocation;
 
     private Set<GeoQuery> geoQueries = new HashSet<>();
     View v;
     LocationRequest mLocationRequest;
-
+    LocationManager locationManager;
     private double radius = 900000;
+    private boolean hideMark = false;
 
     public HomeMap() {
         // Required empty public constructor
@@ -114,6 +124,134 @@ public class HomeMap extends Fragment implements OnMapReadyCallback, GoogleApiCl
             } catch (InflateException e) {
         /* map is already there, just return view as it is */
             }
+
+            controlGps = (Button) v.findViewById(R.id.controlGPS);
+            prenderGps = (Button) v.findViewById(R.id.prederGPS);
+            btnCurrentLocation = (ImageView) v.findViewById(R.id.currentLocation);
+
+            btnCurrentLocation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    checkGpsStatus();
+                    if(GpsStatus != true){
+
+                        AlertDialog.Builder alerDialog = new AlertDialog.Builder(getContext());
+
+                        alerDialog.setTitle("Configuracion GPS");
+                        alerDialog.setMessage("Ocultar Loacalización?");
+
+                        alerDialog.setPositiveButton("Configurarción", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                getContext().startActivity(intent);
+
+
+                            }
+                        });
+
+                        alerDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        alerDialog.show();
+
+                    }else{
+                        GetPositionTask fetchCordinates = new GetPositionTask(getActivity()) {
+
+                            @Override
+                            protected void onPostExecute(Double[] result) {
+
+                                if (result != null) {
+                                    double latitude = result[0];
+                                    double longitude = result[1];
+
+                                    // have coordinates, continue on UI thread
+                                    //   textViewLocation.setText(latitude + "/" + longitude);
+                                    LatLng l = new LatLng(latitude, longitude);
+                                    CameraPosition position = new CameraPosition.Builder()
+                                            .target(l) // Sets the new camera position
+                                            .zoom(27) // Sets the zoom
+                                            .bearing(0) // Rotate the camera
+                                            .tilt(80) // Set the camera tilt
+                                            .build(); // Creates a CameraPosition from the builder
+                                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition((position)));
+                                } else {
+                                    // error occurred
+                                }
+                            }
+
+
+                        };
+                        fetchCordinates.execute();
+                    }
+
+                }
+            });
+            prenderGps.setVisibility(View.GONE);
+
+
+            prenderGps.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    prenderGps.setVisibility(View.GONE);
+                    controlGps.setVisibility(View.VISIBLE);
+                    hideMark = false;
+                }
+            });
+            controlGps.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View view) {
+
+
+
+
+                   checkGpsStatus();
+                   if(GpsStatus == true){
+                       AlertDialog.Builder alerDialog = new AlertDialog.Builder(getContext());
+
+                       alerDialog.setTitle("Configuracion GPS");
+                       alerDialog.setMessage("Ocultar Loacalización?");
+
+                       alerDialog.setPositiveButton("Configurarción", new DialogInterface.OnClickListener() {
+                           @Override
+                           public void onClick(DialogInterface dialog, int which) {
+                               Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                               getContext().startActivity(intent);
+
+
+                           }
+                       });
+
+                       alerDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                           @Override
+                           public void onClick(DialogInterface dialog, int which) {
+                               dialog.cancel();
+                           }
+                       });
+
+                       // mostrando dialogo
+                       checkGpsStatus();
+
+                       if(GpsStatus== false){
+                           controlGps.setVisibility(View.GONE);
+                           prenderGps.setVisibility(View.VISIBLE);
+                       }
+                       alerDialog.show();
+
+                   }
+
+
+
+
+
+                }
+            });
             return v;
 
         }else{
@@ -132,7 +270,13 @@ public class HomeMap extends Fragment implements OnMapReadyCallback, GoogleApiCl
         buildGoogleApiCliente();
 
         FirebaseUser currentUser =FirebaseAuth.getInstance().getCurrentUser();
-        if(currentUser!= null){
+        if(currentUser!= null) {
+
+
+            checkGpsStatus();
+            if (GpsStatus != false) {
+
+
             GetPositionTask fetchCordinates = new GetPositionTask(getActivity()) {
 
                 @Override
@@ -151,7 +295,16 @@ public class HomeMap extends Fragment implements OnMapReadyCallback, GoogleApiCl
 
             };
 
+
             fetchCordinates.execute();
+
+        }else{
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                final  DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference().child("userAvailable").child(userId);
+                ref2.removeValue();
+
+
+            }
 
             MostrarUsuarios mostrarUsuarios = new MostrarUsuarios();
             mostrarUsuarios.execute();
@@ -173,7 +326,7 @@ public class HomeMap extends Fragment implements OnMapReadyCallback, GoogleApiCl
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        mMap.setMyLocationEnabled(true);
+        mMap.setMyLocationEnabled(false);
     }
 
     final int LOCATION_REQUEST_CODE = 1;
@@ -231,9 +384,12 @@ public class HomeMap extends Fragment implements OnMapReadyCallback, GoogleApiCl
     }
     abstract class GetPositionTask extends AsyncTask<Void, Void,  Double[]> implements LocationListener
     {
+
+
         final long TWO_MINUTES = 2*60*1000;
         private Location location;
         private LocationManager lm;
+        LatLng latLng;
         public GetPositionTask(Context context) {
             lm = (LocationManager) context
                     .getSystemService(Context.LOCATION_SERVICE);
@@ -260,6 +416,9 @@ public class HomeMap extends Fragment implements OnMapReadyCallback, GoogleApiCl
         protected  Double[] doInBackground(Void... params)
         {
 
+            if(GpsStatus != false){
+
+            }
             Double[] coords = null;
             // Try to use the last known position
             if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -272,7 +431,9 @@ public class HomeMap extends Fragment implements OnMapReadyCallback, GoogleApiCl
                 // for ActivityCompat#requestPermissions for more details.
                 return null;
             }
+            if(GpsStatus !=false){
             Location lastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
 
             // If it's too old, get a new one by location manager
             if (System.currentTimeMillis() - lastLocation.getTime() > TWO_MINUTES)
@@ -282,9 +443,11 @@ public class HomeMap extends Fragment implements OnMapReadyCallback, GoogleApiCl
 
                 return coords;
             }
+
             coords = new Double[2];
             coords[0] = lastLocation.getLatitude();
             coords[1] = lastLocation.getLongitude();
+            }
             return coords;
         }
 
@@ -306,10 +469,16 @@ public class HomeMap extends Fragment implements OnMapReadyCallback, GoogleApiCl
 
             if(currentUser != null){
                 if (getActivity() != null) {
-                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                     latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     if(!isFirstLocation)
                     {
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng , 19.0F));
+                        CameraPosition position = new CameraPosition.Builder()
+                                .target(latLng) // Sets the new camera position
+                                .zoom(27) // Sets the zoom
+                                .bearing(0) // Rotate the camera
+                                .tilt(80) // Set the camera tilt
+                                .build(); // Creates a CameraPosition from the builder
+                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition((position)));
 
 
                         isFirstLocation=true;
@@ -327,54 +496,45 @@ public class HomeMap extends Fragment implements OnMapReadyCallback, GoogleApiCl
 
         }
 
-        public void onProviderDisabled(String provider) {}
+        public void onProviderDisabled(String provider) {
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            final  DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference().child("userAvailable").child(userId);
+            ref2.removeValue();
+
+            AlertDialog.Builder alerDialog = new AlertDialog.Builder(getContext());
+
+            alerDialog.setTitle("Configuracion GPS");
+            alerDialog.setMessage("Ocultar Loacalización?");
+
+            alerDialog.setPositiveButton("Configurarción", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    getContext().startActivity(intent);
+
+
+                }
+            });
+
+            alerDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            alerDialog.show();
+        }
         public void onProviderEnabled(String provider) {}
         public void onStatusChanged(String provider, int status, Bundle extras) {}
 
         protected abstract void onPostExecute(Double[] result);
+
     }
 
 
 
-    public class FetchGPS extends AsyncTask<Void, Void, Double[]> {
 
-        private static final String TAG = "FetchGPS";
-
-        private LocationManager mLocationManager;
-
-        public FetchGPS(Context context) {
-            mLocationManager = (LocationManager) context
-                    .getSystemService(Context.LOCATION_SERVICE);
-        }
-
-        @Override
-        protected Double[] doInBackground(Void... params) {
-
-            Double[] coords = null;
-
-            try {
-                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return null;
-                }
-                Location location = mLocationManager
-                        .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                coords = new Double[2];
-                coords[0] = location.getLatitude();
-                coords[1] = location.getLongitude();
-            } catch (Exception e) {
-                Log.e(TAG, "could not get coordinates", e);
-            }
-
-            return coords;
-        }
-    }
 
 
     public class MostrarUsuarios extends AsyncTask<Void,Void,Void> {
@@ -412,21 +572,34 @@ public class HomeMap extends Fragment implements OnMapReadyCallback, GoogleApiCl
 
                                 LatLng meetLatLng = new LatLng(location.latitude, location.longitude);
 
-
+                                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                                 Marker marker = markers.get(claveUser);
+                                Marker marker2 = markers.get(userId);
+
+                                if(hideMark == true && marker2 != null){
+
+                                     marker2.remove();
+                                     markers.remove(userId);
+
+                                }
                                 if (marker != null) {
                                     marker.remove();
                                     markers.remove(claveUser);
                                 }
 
-
+                                if(userInfo.getIdUsuario().length() != 0){
 
                                 m =   mMap.addMarker(new MarkerOptions().position(meetLatLng).title(userInfo.getUsuario()));
-                                m.setTag(userInfo.getIdUsuario());
-                                PicassoMarker mark = new PicassoMarker(m);
-                                Picasso.with(getActivity()).load(userInfo.getImagenPerfil()).resize(60,60).centerCrop().transform(new CropCircleTransformation()).into(mark);
 
+                                m.setTag(userInfo.getIdUsuario());
                                 markers.put(claveUser,m);
+
+                                    PicassoMarker mark = new PicassoMarker(m);
+                                    Picasso.with(getActivity()).load(userInfo.getImagenPerfil()).resize(60,60).centerCrop().transform(new CropCircleTransformation()).into(mark);
+
+
+                                }
+
 
                                 mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener(){
                                     @Override
@@ -497,7 +670,15 @@ public class HomeMap extends Fragment implements OnMapReadyCallback, GoogleApiCl
                 @Override public void onKeyMoved(String key, GeoLocation location) {
 
 //por aca entra?
+                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    Marker marker2 = markers.get(userId);
 
+                    if(hideMark == true && marker2 != null){
+
+                        marker2.remove();
+                        markers.remove(userId);
+
+                    }
                     Marker marker =markers.get(key);
                     if (marker != null) {
 
@@ -551,6 +732,15 @@ public class HomeMap extends Fragment implements OnMapReadyCallback, GoogleApiCl
                 }
             });
         }
+
+    }
+    private void  checkGpsStatus(){
+
+
+        locationManager = (LocationManager)getContext().getSystemService(getContext().LOCATION_SERVICE);
+        GpsStatus  = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+
 
     }
 
