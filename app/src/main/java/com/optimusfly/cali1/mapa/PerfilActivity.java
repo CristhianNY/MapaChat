@@ -17,7 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.optimusfly.cali1.mapa.Adapters.SliderAdapter;
 import com.optimusfly.cali1.mapa.Models.Usuario;
 import com.optimusfly.cali1.mapa.fragments.ChatFragment;
-import com.optimusfly.cali1.mapa.fragments.MapaFragment;
+import com.optimusfly.cali1.mapa.fragments.HomeMap;
 
 import java.util.ArrayList;
 
@@ -101,7 +101,7 @@ public class PerfilActivity extends AppCompatActivity {
     public void onBackPressed() {
 
         super.onBackPressed();
-        MapaFragment mapaFragment = new MapaFragment();
+        HomeMap mapaFragment = new HomeMap();
         //  MainFragment mainFragment = new MainFragment();
         // principalFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, mapaFragment)

@@ -50,9 +50,6 @@
             android:screenOrientation="portrait" />
         <activity android:name=".DriverLoginActivity" />
         <activity android:name=".MapActivity" />
-        <activity
-            android:name=".CustomerLoginActivity"
-            android:configChanges="orientation|screenSize" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -79,7 +76,6 @@
             </intent-filter>
 
         </activity>
-        <activity android:name=".CustomerMapaActivity" />
         <activity android:name=".LoginActivity"/>
 
 

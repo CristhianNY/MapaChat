@@ -135,9 +135,15 @@ public class PerfilFragment extends Fragment {
                             String value = (String) dataSnapshot.getValue();
 
                             // do your stuff here with value
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(value));
-                            startActivity(intent);
+                            if(value.length() > 0){
 
+
+
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(value));
+                                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                    startActivity(intent);
+                                }
+                            }
                         }
 
                         @Override

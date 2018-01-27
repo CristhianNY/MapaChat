@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -39,6 +40,7 @@ public class PicassoMarker implements Target {
 
         if(bitmap!= null && from != null){
             mMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+            mMarker.setVisible(true);
         }
 
 

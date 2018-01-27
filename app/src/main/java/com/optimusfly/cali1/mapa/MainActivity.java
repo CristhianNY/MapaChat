@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity  implements  NavigationView.
             startActivityForResult(intent, REQUEST_INVITE);**/
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "Hola Te invito a instalar esta aplicación para conocer gente cerca https://play.google.com/store/apps/details?id=com.optimusfly.cali1.mapa&hl=en.");
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Hola Te invito a leer comentarios de las peliculas en cartelera antes de ir a cine  https://play.google.com/store/apps/details?id=com.optimusfly.cali1.mapa&hl=en.");
             sendIntent.setType("text/plain");
             startActivity(sendIntent);
 

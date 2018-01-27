@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -33,6 +34,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
@@ -46,6 +50,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -589,13 +595,34 @@ public class HomeMap extends Fragment implements OnMapReadyCallback, GoogleApiCl
 
                                 if(userInfo.getIdUsuario().length() != 0){
 
-                                m =   mMap.addMarker(new MarkerOptions().position(meetLatLng).title(userInfo.getUsuario()));
+                               m =   mMap.addMarker(new MarkerOptions().position(meetLatLng).title(userInfo.getUsuario()).visible(false));
+                                    MarkerOptions marcador = new MarkerOptions().position(
+                                            meetLatLng).title(userInfo.getUsuario());
+
 
                                 m.setTag(userInfo.getIdUsuario());
-                                markers.put(claveUser,m);
+
+
 
                                     PicassoMarker mark = new PicassoMarker(m);
-                                    Picasso.with(getActivity()).load(userInfo.getImagenPerfil()).resize(60,60).centerCrop().transform(new CropCircleTransformation()).into(mark);
+                                    markers.put(claveUser,m);
+
+                                  /**  Glide.with(getActivity()).load(userInfo.getImagenPerfil())
+                                            .asBitmap().fitCenter().override(50,50).into(new SimpleTarget<Bitmap>() {
+                                        @Override
+                                        public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+
+                                            BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(bitmap);
+                                            m.setIcon(icon);
+                                            m.setVisible(true);
+                                        }
+                                    });**/
+                                  if(mark!=null){
+                                      Picasso.with(getActivity()).load(userInfo.getImagenPerfil()).resize(60,60).centerCrop().transform(new CropCircleTransformation()).into(mark);
+
+                                  }
+
+
 
 
                                 }
